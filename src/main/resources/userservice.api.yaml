@@ -1,0 +1,235 @@
+openapi: 3.0.0
+info:
+  title: Users Service API
+  description: API for managing user details and validation
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local server
+
+paths:
+  /auth/token:
+    post:
+      operationId: generateToken
+      summary: Create an opaque token for the user
+      description: Creates an opaque token for the user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '201':
+          description: Successfully created a token for the given user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenDetailsResponse'
+        '404':
+          description: User not found
+        '400': 
+          description: Invalid inputs
+        '500':
+          description: Internal server error
+
+  /auth/validate:
+    get:
+      summary: Validate user token
+      description: Validates the token and returns user details
+      operationId: authorizeUserToken
+      responses:
+        '200':
+          description: User is valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailsResponse'
+        '400':
+          description: Invalid request data
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+      security:
+        - BearerAuth : []
+  /users/{userId}:
+    get:
+      summary: Retrieve the details of the given user
+      description: Retrieve the details of the given user
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      security:
+        - BearerAuth : []
+  /users/{userId}/contact:
+    get:
+      summary: Retrieve the contact details of the given user
+      description: Retrieve the contact details of the given user
+      operationId: getUserContact
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      security:
+        - BearerAuth : []
+  /users/{userId}/profile:
+    get:
+      summary: Retrieve the profile details of the given user
+      description: Retrieve the profile details of the given user
+      operationId: getUserProfile
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      security:
+        - BearerAuth : []
+
+  /users/{userId}/summary:
+    get:
+      summary: Retrieve the basic details of the given user
+      description: Retrieve the basic details of the given user
+      operationId: getUserSummary
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      security:
+        - BearerAuth : []
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "johndoe"
+        password:
+          type: string
+          example: "Password123!"
+      required:
+        - username
+        - password
+    UserDetailsResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123"
+        scopes:
+          type: array
+          items:
+            type: string
+          example: [bid:create, auction:read, user:read_contact]  
+      required:
+        - id  
+        - privileges 
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1y127y3e
+        firstName:
+          type: string
+          example: Jacob
+        middleName:
+          type: string
+          example: martha
+        lastName:
+          type: string
+          example: Wilson
+        email:
+          type: string
+          example: test@gmail.com
+        contactNo:
+          type: string
+          example: 167217862
+        zipcode:
+          type: string
+          example: 256667                            
+        active:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+    TokenDetailsResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJHGcdsjfldsfdssssssvdfvdfvdf"
+      required:
+        - token      
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

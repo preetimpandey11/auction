@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>4.0.0-M1</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ba</groupId>
 	<artifactId>auction</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>auction</name>
-	<description>Prototype project  for managing the blind auction</description>
-	<url/>
+	<description>Prototype project for managing the blind auction</description>
+	<url />
 	<licenses>
-		<license/>
+		<license />
 	</licenses>
 	<developers>
-		<developer/>
+		<developer />
 	</developers>
 	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
+		<connection />
+		<developerConnection />
+		<tag />
+		<url />
 	</scm>
 	<properties>
 		<java.version>17</java.version>
@@ -42,7 +43,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-<dependency>
+		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.8.9</version>
@@ -73,6 +74,29 @@
 			<artifactId>modelmapper-module-record</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+
+		<!-- Add Jersey client dependency for jakarta.ws.rs.client support -->
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>4.0.0-M2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>4.0.0-M2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>4.0.0-M2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>4.0.0-M2</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -112,6 +136,66 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>7.14.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>
+								${project.basedir}/src/main/resources/userservice.api.yaml</inputSpec>
+
+							<generatorName>java</generatorName>
+							<output>${project.build.directory}/generated-sources</output>
+							<packageName>com.ba.users</packageName>
+							<apiPackage>com.ba.users.api</apiPackage>
+							<modelPackage>com.ba.users.model</modelPackage>
+							<configOptions>
+								<library>jersey2</library>
+								<dateLibrary>java8</dateLibrary>
+								<useJakartaEe>true</useJakartaEe>
+							</configOptions>
+
+							<!--<generatorName>java</generatorName>
+							<library>restclient</library>
+							<invokerPackage>com.ba.users.client</invokerPackage>
+							<apisToGenerate>/auth/validate</apisToGenerate>
+
+							<configOptions>
+								<javaVersion>17</javaVersion>
+								<dateLibrary>java8</dateLibrary>
+								<useJakartaEe>true</useJakartaEe>
+							</configOptions>-->
+							<!-- 
+							Path
+							to your OpenAPI YAML  -->
+							<!--<generatorName>spring</generatorName>
+							<output>${project.build.directory}/generated-sources</output>
+							<packageName>com.ba.users</packageName>
+							<invokerPackage>com.ba.users.client</invokerPackage>
+							<modelPackage>com.ba.users.model</modelPackage>
+							<generatorName>java</generatorName>
+							<generateApis>false</generateApis>
+							<generateApiDocumentation>false</generateApiDocumentation>
+							<generateApiTests>false</generateApiTests>
+							<generateSupportingFiles>false</generateSupportingFiles>
+							<library>restclient</library>
+							<configOptions>
+								<javaVersion>17</javaVersion>
+								  For Java 17  
+								<dateLibrary>java8</dateLibrary>
+								<interfaceOnly>true</interfaceOnly>
+								<useJakartaEe>true</useJakartaEe>
+							</configOptions>-->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 
