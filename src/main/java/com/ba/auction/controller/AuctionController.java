@@ -1,7 +1,6 @@
 package com.ba.auction.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -35,9 +34,9 @@ public class AuctionController implements AuctionsApi {
 
 	@Override
 	@PreAuthorize("hasAuthority('auction:create')")
-	public ResponseEntity<Void> createAuction(@Valid AuctionDetails auctionDetails) {
-		auctionService.createAuction(auctionDetails);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+	public ResponseEntity<AuctionDetails> createAuction(@Valid AuctionDetails auctionDetails) {
+		Auction createdAuction = auctionService.createAuction(auctionDetails);
+		return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(createdAuction, AuctionDetails.class));
 	}
 
 	@Override
@@ -45,7 +44,7 @@ public class AuctionController implements AuctionsApi {
 	public ResponseEntity<List<AuctionDetails>> listAuctions(@NotNull @Valid Boolean open) {
 		List<Auction> openAuctions = auctionService.getAllActiveAuctions();
 		List<AuctionDetails> response = openAuctions.stream().map(a -> modelMapper.map(a, AuctionDetails.class))
-				.collect(Collectors.toList());
+				.toList();
 		return ResponseEntity.ok(response);
 	}
 
@@ -58,10 +57,12 @@ public class AuctionController implements AuctionsApi {
 
 	@Override
 	@PreAuthorize("hasAuthority('auctionedProduct:create')")
-	public ResponseEntity<Void> addProductToAnAuction(String auctionId,
+	public ResponseEntity<AuctionedProductDetails> addProductToAnAuction(String auctionId,
 			@Valid AuctionedProductDetails auctionedProductDetails) {
-		productService.addProductToAuction(Long.valueOf(auctionId), auctionedProductDetails);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		AuctionedProduct addProductToAuction = productService.addProductToAuction(Long.valueOf(auctionId),
+				auctionedProductDetails);
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(modelMapper.map(addProductToAuction, AuctionedProductDetails.class));
 	}
 
 	@Override
@@ -75,7 +76,7 @@ public class AuctionController implements AuctionsApi {
 	public ResponseEntity<List<AuctionedProductDetails>> viewAuctionedProducts(String auctionId) {
 		List<AuctionedProduct> products = productService.getAuctionedProducts(Long.valueOf(auctionId));
 		List<AuctionedProductDetails> response = products.stream()
-				.map(p -> modelMapper.map(p, AuctionedProductDetails.class)).collect(Collectors.toList());
+				.map(p -> modelMapper.map(p, AuctionedProductDetails.class)).toList();
 		return ResponseEntity.ok(response);
 	}
 

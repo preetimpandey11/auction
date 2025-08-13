@@ -4,7 +4,6 @@
 package com.ba.auction.security;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,8 +32,8 @@ public class AuctionAuthorizationFilter extends OncePerRequestFilter {
 
 	private final DefaultApi defaultApi;
 
-	private final String AUTH_HEADER = "Authorization";
-	private final String AUTH_TYPE = "Bearer";
+	private static final String AUTH_HEADER = "Authorization";
+	private static final String AUTH_TYPE = "Bearer";
 
 	private String extractAuthorizationHeader(HttpServletRequest request) {
 		final String headerValue = request.getHeader(AUTH_HEADER);
@@ -61,8 +60,8 @@ public class AuctionAuthorizationFilter extends OncePerRequestFilter {
 			defaultApi.getApiClient().setBearerToken(token);
 			UserDetailsResponse authenticatedUser = defaultApi.authorizeUserToken();
 			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-					authenticatedUser.getId(), null, authenticatedUser.getScopes().stream()
-							.map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+					authenticatedUser.getId(), null,
+					authenticatedUser.getScopes().stream().map(SimpleGrantedAuthority::new).toList());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			ThreadContext.put("uid", authenticatedUser.getId());
 

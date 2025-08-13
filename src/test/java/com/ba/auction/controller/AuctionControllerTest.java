@@ -39,10 +39,9 @@ import com.ba.users.model.UserDetailsResponse;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-//@Sql("classpath:test-data.sql")
 @Transactional
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AuctionControllerTest {
+ class AuctionControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -68,7 +67,7 @@ public class AuctionControllerTest {
 	private String bearerToken = "Bearer dummy-token";
 
 	@BeforeEach
-	public void setup() throws ApiException {
+	 void setup() throws ApiException {
 		mockApiClient = Mockito.mock(ApiClient.class);
 
 		when(defaultApi.getApiClient()).thenReturn(mockApiClient);
@@ -79,7 +78,6 @@ public class AuctionControllerTest {
 		mockUser.setId("test-user");
 		mockUser.setScopes(List.of("auction:create", "auction:view", "auction:close", "auctionedProduct:create",
 				"auctionedProduct:view", "bid:create"));
-//		ThreadContext.put("uid", "test-user");
 
 		when(defaultApi.authorizeUserToken()).thenReturn(mockUser);
 
@@ -122,7 +120,7 @@ public class AuctionControllerTest {
 
 	@Order(3)
 	@Test
-	public void testListAuctions() throws Exception {
+	 void testListAuctions() throws Exception {
 		mockMvc.perform(get("/auctions").param("open", "true").header("Authorization", bearerToken))
 				.andExpect(status().isOk()).andExpect(jsonPath("$").isArray())
 				.andExpect(jsonPath("$[0].auctionId").value(auction.getId().toString()))
@@ -131,7 +129,7 @@ public class AuctionControllerTest {
 
 	@Order(1)
 	@Test
-	public void testCreateAuction() throws Exception {
+	 void testCreateAuction() throws Exception {
 		String json = """
 				    {
 				      "name": "New Auction"
@@ -144,7 +142,7 @@ public class AuctionControllerTest {
 
 	@Order(2)
 	@Test
-	public void testGetAuctionById() throws Exception {
+	 void testGetAuctionById() throws Exception {
 		mockMvc.perform(get("/auctions/{auctionId}", auction.getId()).header("Authorization", bearerToken))
 				.andExpect(status().isOk()).andExpect(jsonPath("$.auctionId").value(auction.getId().toString()))
 				.andExpect(jsonPath("$.name").value("Test Auction"));
@@ -152,7 +150,7 @@ public class AuctionControllerTest {
 
 	@Order(7)
 	@Test
-	public void testCloseAuction() throws Exception {
+	 void testCloseAuction() throws Exception {
 		mockMvc.perform(post("/auctions/{auctionId}/close", auction.getId()).header("Authorization", bearerToken))
 				.andExpect(status().isOk()).andExpect(jsonPath("$.ended").value(true))
 				.andExpect(jsonPath("$.products").isArray());
@@ -160,7 +158,7 @@ public class AuctionControllerTest {
 
 	@Order(5)
 	@Test
-	public void testGetAuctionedProducts() throws Exception {
+	 void testGetAuctionedProducts() throws Exception {
 		mockMvc.perform(
 				get("/auctions/{auctionId}/auctionedProducts", auction.getId()).header("Authorization", bearerToken))
 				.andExpect(status().isOk()).andExpect(jsonPath("$").isArray())
@@ -169,7 +167,7 @@ public class AuctionControllerTest {
 
 	@Order(4)
 	@Test
-	public void testAddProductToAuction() throws Exception {
+	 void testAddProductToAuction() throws Exception {
 		String productJson = """
 				{
 				  "productName": "handbag",
@@ -184,7 +182,7 @@ public class AuctionControllerTest {
 
 	@Order(6)
 	@Test
-	public void testPlaceBid() throws Exception {
+	 void testPlaceBid() throws Exception {
 
 		String bidJson = """
 				{

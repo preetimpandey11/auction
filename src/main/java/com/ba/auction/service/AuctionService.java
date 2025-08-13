@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.ba.auction.entity.Auction;
 import com.ba.auction.entity.AuctionedProduct;
+import com.ba.auction.exception.AuctionAlreadyEndedException;
 import com.ba.auction.model.AuctionClosureDetails;
 import com.ba.auction.model.AuctionClosureDetailsProductsInner;
 import com.ba.auction.model.AuctionDetails;
@@ -50,15 +51,13 @@ public class AuctionService {
 	public AuctionClosureDetails endAuction(Long auctionId) {
 		Auction auction = getAuctionForOwner(auctionId);
 		if (auction.isEnded()) {
-			throw new RuntimeException("Auction already ended");
+			throw new AuctionAlreadyEndedException("Auction already ended");
 		}
 
 		List<AuctionedProduct> auctionedProducts = auctionedProductRepository.findByAuctionId(auctionId);
 
-		auctionedProducts.forEach(ap -> {
-			bidRepository.findTopByAuctionedProductIdOrderByAmountDesc(ap.getId())
-					.ifPresent(winningBid -> ap.setWinningBid(winningBid));
-		});
+		auctionedProducts.forEach(ap -> bidRepository.findTopByAuctionedProductIdOrderByAmountDesc(ap.getId())
+				.ifPresent(ap::setWinningBid));
 
 		auctionedProductRepository.saveAll(auctionedProducts);
 
