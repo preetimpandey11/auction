@@ -1,0 +1,257 @@
+openapi: 3.0.0
+info:
+  title: Auction Service API
+  description: Basic API for managing auctions, products, and bids.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8081/api/v1
+    description: Local server
+
+paths:
+  /auctions:
+    get:
+      summary: View all auctions
+      operationId: listAuctions
+      parameters:
+        - in: query
+          name: open
+          required: true
+          schema:
+            type: boolean      
+      responses:
+        '200':
+          description: List of auctions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuctionDetails'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      security:
+        - BearerAuth : []                  
+    post:
+      summary: Create auction
+      operationId: createAuction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuctionDetails'
+      responses:
+        '201': { description: Auction created }
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      security:
+        - BearerAuth : []        
+
+  /auctions/{auctionId}:
+    get:
+      summary: View auction by ID
+      operationId: viewAuctions
+      parameters:
+        - in: path
+          name: auctionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Auction details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuctionDetails'
+  /auctions/{auctionId}/close:  
+    post:
+      summary: close auction by ID
+      operationId: closeAuction
+      parameters:
+        - in: path
+          name: auctionId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Auction details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuctionClosureDetails'                
+  /auctions/{auctionId}/auctionedProducts:
+    get:
+      summary: View products in auction
+      operationId: viewAuctionedProducts
+      parameters:
+        - in: path
+          name: auctionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuctionedProductDetails'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      security:
+        - BearerAuth : []                  
+    post:
+      summary: Add product to auction
+      operationId: addProductToAnAuction
+      parameters:
+        - in: path
+          name: auctionId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuctionedProductDetails'
+      responses:
+        '201': { description: Product added }
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      security:
+        - BearerAuth : []        
+  /auctions/{auctionId}/auctionedProducts/{productId}/bids:
+    post:
+      summary: Place bid on product
+      operationId: registerBids
+      parameters:
+        - in: path
+          name: auctionId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidDetails'
+      responses:
+        '201': { description: Bid placed }
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+      security:
+        - BearerAuth : []        
+components:
+  schemas:
+    AuctionClosureDetails:
+      type: object
+      required:
+        - auctionId
+        - name
+        - ended
+        - auctionedProducts
+      properties:
+        auctionId:
+          type: integer
+          format: int64
+          description: ID of the auction
+        name:
+          type: string
+          description: Name of the auction
+        ended:
+          type: boolean
+          description: Indicates if auction has ended
+        products:
+          type: array
+          description: List of products in the auction with winning bid info
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Product name
+              minimumBidAmount:
+                type: number
+                format: double
+                description: Minimum bid amount for this product
+              winningBidId:
+                type: integer
+                format: int64
+                description: Winning bid ID for this product
+              winningBidUserId:
+                type: string
+                description: User ID of the winning bidder
+              winningBidAmount:
+                type: number
+                format: double
+                description: Winning bid amount for this product
+    AuctionDetails:
+      type: object
+      properties:
+        auctionId:
+          type: string
+        name:
+          type: string
+
+    AuctionedProductDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        productName:
+          type: string
+        minimumBid:
+          type: number
+          format: float
+
+    BidDetails:
+      type: object
+      properties:
+        bidId:
+          type: string
+        bidderName:
+          type: string
+        amount:
+          type: number
+          format: float
+        timestamp:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
