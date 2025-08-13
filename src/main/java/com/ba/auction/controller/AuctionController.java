@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,7 +37,7 @@ public class AuctionController implements AuctionsApi {
 	@PreAuthorize("hasAuthority('auction:create')")
 	public ResponseEntity<Void> createAuction(@Valid AuctionDetails auctionDetails) {
 		auctionService.createAuction(auctionDetails);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class AuctionController implements AuctionsApi {
 	public ResponseEntity<Void> addProductToAnAuction(String auctionId,
 			@Valid AuctionedProductDetails auctionedProductDetails) {
 		productService.addProductToAuction(Long.valueOf(auctionId), auctionedProductDetails);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public class AuctionController implements AuctionsApi {
 	@PreAuthorize("hasAuthority('bid:create')")
 	public ResponseEntity<Void> registerBids(String auctionId, String productId, @Valid BidDetails bidDetails) {
 		bidService.placeBid(Long.valueOf(auctionId), Long.valueOf(productId), bidDetails);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 }
