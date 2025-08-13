@@ -79,22 +79,18 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>4.0.0-M2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-multipart</artifactId>
-			<version>4.0.0-M2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
-			<version>4.0.0-M2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-multipart</artifactId>
-			<version>4.0.0-M2</version>
 		</dependency>
 
 		<dependency>
@@ -127,70 +123,55 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<version>7.14.0</version>
 				<executions>
+					<!-- Existing UserService client generation -->
 					<execution>
+						<id>generate-user-service-client</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
 						<configuration>
 							<inputSpec>
 								${project.basedir}/src/main/resources/userservice.api.yaml</inputSpec>
-
 							<generatorName>java</generatorName>
-							<output>${project.build.directory}/generated-sources</output>
+							<output>
+								${project.build.directory}/generated-sources/userservice</output>
 							<packageName>com.ba.users</packageName>
 							<apiPackage>com.ba.users.api</apiPackage>
 							<modelPackage>com.ba.users.model</modelPackage>
 							<configOptions>
-								<library>jersey2</library>
+								<library>jersey3</library>
 								<dateLibrary>java8</dateLibrary>
 								<useJakartaEe>true</useJakartaEe>
 							</configOptions>
+						</configuration>
+					</execution>
 
-							<!--<generatorName>java</generatorName>
-							<library>restclient</library>
-							<invokerPackage>com.ba.users.client</invokerPackage>
-							<apisToGenerate>/auth/validate</apisToGenerate>
-
+					<execution>
+						<id>generate-auction-service-server</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>
+								${project.basedir}/src/main/resources/auctionservice.api.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<output>
+								${project.build.directory}/generated-sources/auctionservice</output>
+							<apiPackage>com.ba.auction.api</apiPackage>
+							<modelPackage>com.ba.auction.model</modelPackage>
 							<configOptions>
-								<javaVersion>17</javaVersion>
-								<dateLibrary>java8</dateLibrary>
-								<useJakartaEe>true</useJakartaEe>
-							</configOptions>-->
-							<!-- 
-							Path
-							to your OpenAPI YAML  -->
-							<!--<generatorName>spring</generatorName>
-							<output>${project.build.directory}/generated-sources</output>
-							<packageName>com.ba.users</packageName>
-							<invokerPackage>com.ba.users.client</invokerPackage>
-							<modelPackage>com.ba.users.model</modelPackage>
-							<generatorName>java</generatorName>
-							<generateApis>false</generateApis>
-							<generateApiDocumentation>false</generateApiDocumentation>
-							<generateApiTests>false</generateApiTests>
-							<generateSupportingFiles>false</generateSupportingFiles>
-							<library>restclient</library>
-							<configOptions>
-								<javaVersion>17</javaVersion>
-								  For Java 17  
-								<dateLibrary>java8</dateLibrary>
 								<interfaceOnly>true</interfaceOnly>
+								<dateLibrary>java8</dateLibrary>
 								<useJakartaEe>true</useJakartaEe>
-							</configOptions>-->
+								<javaVersion>17</javaVersion>
+								<skipDefaultInterface>true</skipDefaultInterface>
+							</configOptions>
 						</configuration>
 					</execution>
 				</executions>

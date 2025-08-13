@@ -67,7 +67,7 @@ paths:
             type: string
       responses:
         '200':
-          description: 
+          description: User details retrieved successfully
           content:
             application/json:
               schema:
@@ -94,7 +94,7 @@ paths:
             type: string
       responses:
         '200':
-          description: 
+          description: Retrieve the contact details of the given user
           content:
             application/json:
               schema:
@@ -121,7 +121,7 @@ paths:
             type: string
       responses:
         '200':
-          description: 
+          description: Retrieve the profile details of the given user
           content:
             application/json:
               schema:
@@ -149,7 +149,7 @@ paths:
             type: string
       responses:
         '200':
-          description: 
+          description: Retrieve the summary of the given user
           content:
             application/json:
               schema:
@@ -187,7 +187,7 @@ components:
           type: array
           items:
             type: string
-          example: [bid:create, auction:read, user:read_contact]  
+            example: ['bid:create', 'auction:read', 'user:read_contact']  
       required:
         - id  
         - privileges 
